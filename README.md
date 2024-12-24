@@ -12,3 +12,8 @@ Then,
 ```
 snakemake -j 4
 ```
+
+And finally:
+```
+sourmash sig cat merged/*.sig.zip -o gtdb-rs220-phylum.sig.zip
+```

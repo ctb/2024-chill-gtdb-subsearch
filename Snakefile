@@ -18,3 +18,10 @@ rule build_merge:
             {input.db} -k 51 --scaled 100_000 -o - | \
         sourmash sig merge - -o {output} --set-name {wildcards.phylum}
     """
+
+rule plants_downsample:
+    input: "genbank-plants-2024-07.k51.zip",
+    output: "genbank-plants-2024.07.k51.s100_000.sig.zip",
+    shell: """
+       sourmash sig downsample {input} -k 51 --scaled 100_000 -o {output}
+    """
