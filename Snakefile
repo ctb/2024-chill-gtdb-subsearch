@@ -1,22 +1,23 @@
-PHYLA, = glob_wildcards('picklists-phylum/picklist-{phylum}.csv')
+RANK = 'genus'
+NAMES, = glob_wildcards(f'picklists-{RANK}/picklist-{{name}}.csv')
 
-print(f"got {len(PHYLA)} phyla.")
-print(PHYLA[:5])
+print(f"got {len(NAMES)} names at rank {RANK}.")
+print(NAMES[:5])
 
 rule all:
     input:
-        expand("merged/{phylum}.merged.sig.zip", phylum=PHYLA)
+        expand(f"merged-{RANK}/{{name}}.merged.sig.zip", name=NAMES)
 
 rule build_merge:
     input:
-        picklist="picklists-phylum/picklist-{phylum}.csv",
+        picklist=f"picklists-{RANK}/picklist-{{name}}.csv",
         db="gtdb-rs220-k51.zip",
     output:
-        "merged/{phylum}.merged.sig.zip",
+        f"merged-{RANK}/{{name}}.merged.sig.zip",
     shell: """
         sourmash sig downsample --picklist {input.picklist}:ident:ident \
             {input.db} -k 51 --scaled 100_000 -o - | \
-        sourmash sig merge - -o {output} --set-name {wildcards.phylum}
+        sourmash sig merge - -o {output} --set-name {wildcards.name}
     """
 
 rule plants_downsample:
